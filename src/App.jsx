@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Country from "./components/Country";
 import {
   Theme,
@@ -18,7 +18,7 @@ import NewCountry from "./components/NewCountry";
 function App() {
   const [appearance, setAppearance] = useState("dark");
   const [countries, setCountries] = useState([]);
-  const apiEndpoint = "https://medals-amt-25.azurewebsites.net/api/country"
+  const apiEndpoint = "https://medals-amt-25.azurewebsites.net/api/country";
 
   const medals = useRef([
     { id: 1, name: "gold", color: "#FFD700" },
