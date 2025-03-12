@@ -12,7 +12,7 @@ function Medal(props) {
           <Box pl="2">
             {props.country[props.medal.name].page_value !==
             props.country[props.medal.name].saved_value ? (
-              <Text color="red">
+              <Text color="blue">
                 <Em>{tc(props.medal.name)} Medals</Em>
               </Text>
             ) : (
