@@ -1,28 +1,25 @@
+import { useState } from "react";
 import Medal from "./Medal";
-import { Box, Table, Flex, Badge, Button } from "@radix-ui/themes";
+import { Box, Table, Flex, Badge, Button, Dialog } from "@radix-ui/themes";
 import { TrashIcon, CheckIcon, ResetIcon } from "@radix-ui/react-icons";
 
 function Country(props) {
+  const [open, setOpen] = useState(false); // Modal state
+
   function getMedalsTotal() {
     let sum = 0;
     props.medals.forEach((medal) => {
-      // use medal count displayed in the web page for medal count totals
       sum += props.country[medal.name].page_value;
     });
     return sum;
   }
-  // determines if there are any difference between page_value and saved_value for any medals
+
   function renderSaveButton() {
-    let unsaved = false;
-    props.medals.forEach((medal) => {
-      if (
+    return props.medals.some(
+      (medal) =>
         props.country[medal.name].page_value !==
         props.country[medal.name].saved_value
-      ) {
-        unsaved = true;
-      }
-    });
-    return unsaved;
+    );
   }
 
   return (
@@ -31,20 +28,12 @@ function Country(props) {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell colSpan="2">
-              <Flex justify="between">
-                <span>
-                  {props.country.name}
-                  <Badge variant="outline" ml="2">
-                    {getMedalsTotal(props.country, props.medals)}
-                  </Badge>
-                </span>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "1.2rem",
-                    justifyContent: "space-between",
-                  }}
-                >
+              <Flex justify="between" align="center" gap="3">
+                <Flex align="center" gap="2">
+                  <span>{props.country.name}</span>
+                  <Badge variant="outline">{getMedalsTotal(props.country, props.medals)}</Badge>
+                </Flex>
+                <Flex gap="3">
                   {renderSaveButton() && (
                     <>
                       <Button
@@ -66,13 +55,16 @@ function Country(props) {
                     </>
                   )}
                   {props.canDelete && (
-                    <Button color="red" variant="ghost" size="1">
-                      <TrashIcon
-                        onClick={() => props.onDelete(props.country.id)}
-                      />
+                    <Button
+                      color="red"
+                      variant="ghost"
+                      size="1"
+                      onClick={() => setOpen(true)} // Open modal
+                    >
+                      <TrashIcon />
                     </Button>
                   )}
-                </div>
+                </Flex>
               </Flex>
             </Table.ColumnHeaderCell>
           </Table.Row>
@@ -92,6 +84,30 @@ function Country(props) {
             ))}
         </Table.Body>
       </Table.Root>
+
+      {/* Confirmation Modal */}
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Content>
+          <Dialog.Title>Are you sure?</Dialog.Title>
+          <Dialog.Description>
+            Do you really want to delete <strong>{props.country.name}</strong>? This action cannot be undone.
+          </Dialog.Description>
+          <Flex justify="end" gap="2" mt="2">
+            <Button variant="soft" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              color="red"
+              onClick={() => {
+                props.onDelete(props.country.id);
+                setOpen(false);
+              }}
+            >
+              Delete
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
     </Box>
   );
 }
