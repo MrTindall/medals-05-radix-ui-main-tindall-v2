@@ -241,7 +241,7 @@ function App() {
       `json patch for id: ${countryId}: ${JSON.stringify(jsonPatch)}`
     );
 
-    // update state
+    // update state of countries
     setCountries(mutableCountries);
 
     try {
